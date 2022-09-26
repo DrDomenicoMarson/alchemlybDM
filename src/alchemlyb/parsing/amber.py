@@ -349,6 +349,7 @@ def extract_dHdl(outfile, T):
         nensec = 0
         old_nstep = -1
         into_average_section = False
+        given_warning_about_l_sched = False
         for line in secp:
             if 'DV/DL, AVERAGES OVER' in line \
                 or "      A V E R A G E S   O V E R" in line:
@@ -362,12 +363,13 @@ def extract_dHdl(outfile, T):
                                                    extra=line)
                 
                 if nstep != old_nstep and nstep is not None:
-                    if  dvdl is None and file_datum.clambda in (0.0, 1.0):
+                    if  dvdl is None and file_datum.clambda in (0.0, 1.0) and not given_warning_about_l_sched:
                         print('> Simulation at lambda=0, no DV/DL values found...')
                         print('assuming lambda scheduling and setting DV/DL to 0.0')
                         file_datum.gradients.append(0.0)
                         nensec += 1
                         old_nstep = nstep
+                        given_warning_about_l_sched = True
                     elif dvdl is not None:
                         file_datum.gradients.append(dvdl)
                         nensec += 1
