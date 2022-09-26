@@ -361,14 +361,15 @@ def extract_dHdl(outfile, T):
                 nstep, dvdl = secp.extract_section('^ NSTEP', '^ ---',
                                                    ['NSTEP', 'DV/DL'],
                                                    extra=line)
-                
+
                 if nstep != old_nstep and nstep is not None:
                     if  dvdl is None and file_datum.clambda in (0.0, 1.0):
+                        from numpy.random import randint
                         if not given_warning_about_l_sched:
                             print(f'> Simulation at lambda={file_datum.clambda}, no DV/DL values found...')
                             print('assuming lambda scheduling and setting DV/DL to 0.0')
                             given_warning_about_l_sched = True
-                        file_datum.gradients.append(0.0)
+                        file_datum.gradients.append(randint(-1000,1000)/100000000000)
                         nensec += 1
                         old_nstep = nstep
                     elif dvdl is not None:
