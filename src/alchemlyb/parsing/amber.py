@@ -1,6 +1,6 @@
 """Parsers for extracting alchemical data from `Amber <http://ambermd.org>`_ output files.
 
-Most of the file parsing parts are inherited from
+Some of the file parsing parts are inherited from
 `alchemical-analysis`_.
 
 .. _alchemical-analysis: https://github.com/MobleyLab/alchemical-analysis
