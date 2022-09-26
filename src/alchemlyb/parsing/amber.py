@@ -360,11 +360,18 @@ def extract_dHdl(outfile, T):
                 nstep, dvdl = secp.extract_section('^ NSTEP', '^ ---',
                                                    ['NSTEP', 'DV/DL'],
                                                    extra=line)
-                if nstep != old_nstep and dvdl is not None \
-                        and nstep is not None:
-                    file_datum.gradients.append(dvdl)
-                    nensec += 1
-                    old_nstep = nstep
+                
+                if nstep != old_nstep and nstep is not None:
+                    if  dvdl is None  and file_datum.clambda == 0.0:
+                        print('> Simulation at lambda=0, no DV/DL values found...')
+                        print('assuming lambda scheduling and setting DV/DL to 0.0')
+                        file_datum.gradients.append(0.0)
+                        nensec += 1
+                        old_nstep = nstep
+                    elif dvdl is not None:
+                        file_datum.gradients.append(dvdl)
+                        nensec += 1
+                        old_nstep = nstep
             if line == '   5.  TIMINGS\n':
                 finished = True
                 break
