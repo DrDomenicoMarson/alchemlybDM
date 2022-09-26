@@ -364,7 +364,7 @@ def extract_dHdl(outfile, T):
                 
                 if nstep != old_nstep and nstep is not None:
                     if  dvdl is None and file_datum.clambda in (0.0, 1.0) and not given_warning_about_l_sched:
-                        print('> Simulation at lambda=0, no DV/DL values found...')
+                        print(f'> Simulation at lambda={file_datum.clambda}, no DV/DL values found...')
                         print('assuming lambda scheduling and setting DV/DL to 0.0')
                         file_datum.gradients.append(0.0)
                         nensec += 1
