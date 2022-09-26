@@ -362,7 +362,7 @@ def extract_dHdl(outfile, T):
                                                    extra=line)
                 
                 if nstep != old_nstep and nstep is not None:
-                    if  dvdl is None  and file_datum.clambda == 0.0:
+                    if  dvdl is None and file_datum.clambda in (0.0, 1.0):
                         print('> Simulation at lambda=0, no DV/DL values found...')
                         print('assuming lambda scheduling and setting DV/DL to 0.0')
                         file_datum.gradients.append(0.0)
