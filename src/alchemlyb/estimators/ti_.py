@@ -49,28 +49,37 @@ class TI(BaseEstimator):
 
         # sort by state so that rows from same state are in contiguous blocks,
         # and adjacent states are next to each other
+        ###print(dHdl)
         dHdl = dHdl.sort_index(level=dHdl.index.names[1:])
+        ###print(dHdl, dHdl.index.names)
+
 
         # obtain the mean and variance of the mean for each state
         # variance calculation assumes no correlation between points
         # used to calculate mean
         means = dHdl.groupby(level=dHdl.index.names[1:]).mean()
         variances = np.square(dHdl.groupby(level=dHdl.index.names[1:]).sem())
-
+        ##print("\nmeans:\n", means)
+        ###print("\nvariances:\n", variances)
         # get the lambda names
         l_types = dHdl.index.names[1:]
+        ###print(l_types)
 
         # obtain vector of delta lambdas between each state
         # Fix issue #148, where for pandas == 1.3.0
         # dl = means.reset_index()[list(means.index.names[:])].diff().iloc[1:].values
         dl = means.reset_index()[means.index.names[:]].diff().iloc[1:].values
-
+        ###print("\ndl:\n", dl)
         # apply trapezoid rule to obtain DF between each adjacent state
         deltas = (dl * (means.iloc[:-1].values + means.iloc[1:].values)/2).sum(axis=1)
+        ###print('\nmeans.iloc[:-1].values:\n', means.iloc[:-1].values)
+        ###print('\ninside_par:\n', dl * (means.iloc[:-1].values + means.iloc[1:].values)/2)
+        ##print("\ndeltas:\n", deltas)
 
         # build matrix of deltas between each state
         adelta = np.zeros((len(deltas)+1, len(deltas)+1))
         ad_delta = np.zeros_like(adelta)
+        ###print("\nadelta:\n", adelta, "\nad_delta:\n", ad_delta)
 
         for j in range(len(deltas)):
             out = []
@@ -92,12 +101,18 @@ class TI(BaseEstimator):
                 dout.append((dllr ** 2 * variances.iloc[i:i + j + 2].values / 4).sum(axis=1).sum())
             adelta += np.diagflat(np.array(out), k=j+1)
             ad_delta += np.diagflat(np.array(dout), k=j+1)
+            ##print("\n\nadelta:\n", adelta)
+
 
         # yield standard delta_f_ free energies between each state
         self.delta_f_ = pd.DataFrame(adelta - adelta.T,
                                      columns=means.index.values,
                                      index=means.index.values)
+        ##print("means.index.values:\n", means.index.values)
+        ##print("self.delta_f_:\n", self.delta_f_ )
         self.dhdl = means
+        #print("self.dhdl:\n", self.dhdl )
+        #print(self.delta_f_.iloc[0, -1])
 
         # yield standard deviation d_delta_f_ between each state
         self.d_delta_f_ = pd.DataFrame(np.sqrt(ad_delta + ad_delta.T),
@@ -110,6 +125,7 @@ class TI(BaseEstimator):
         self.d_delta_f_.attrs = dHdl.attrs
         self.dhdl.attrs = dHdl.attrs
 
+        ###print("separate_dhdl:\n", self.separate_dhdl())
         return self
 
     def separate_dhdl(self):
