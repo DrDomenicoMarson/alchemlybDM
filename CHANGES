@@ -13,11 +13,12 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" https://semver.org
 
 
-??/??/2026 jaclark5, jhenin, xiki-tempula
+??/??/2026 jaclark5, jhenin, xiki-tempula, jberg5
 
   * 2.6.0
 
 Fixes
+  - Correct BAR per-stage uncertainty in ABFE.generate_result (Issue #455)
   - Fix pandas warning (Issue #428, PR #429)
   
 Enhancements
